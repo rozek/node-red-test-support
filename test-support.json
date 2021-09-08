@@ -1,0 +1,493 @@
+[
+    {
+        "id": "c88780e902ab4ace",
+        "type": "comment",
+        "z": "78d13f35e7799e01",
+        "name": "global Error Reporting and Dispatching",
+        "info": "",
+        "x": 830,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "ca599453c3629ec7",
+        "type": "inject",
+        "z": "78d13f35e7799e01",
+        "name": "run Tests",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 760,
+        "y": 100,
+        "wires": [
+            [
+                "5daf528cd463b24b"
+            ]
+        ]
+    },
+    {
+        "id": "5daf528cd463b24b",
+        "type": "function",
+        "z": "78d13f35e7799e01",
+        "name": "reset totals",
+        "func": "flow.set('Totals',0)\n\nmsg.TestMode = '-'\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 930,
+        "y": 100,
+        "wires": [
+            [
+                "c0b928f9b26c4ff6",
+                "5d74f4597b8d25a3"
+            ]
+        ]
+    },
+    {
+        "id": "c0b928f9b26c4ff6",
+        "type": "function",
+        "z": "78d13f35e7799e01",
+        "name": "Status",
+        "func": "switch (true) {\n  case (msg.topic === '-'):\n    node.status({})\n    break\n  case (flow.get('Totals') === 0):\n    node.status({fill:'green',shape:'dot',text:'ok'})\n    break\n  default:\n    node.status({fill:'red',shape:'dot',text:'failed'})\n}\n",
+        "outputs": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1190,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "5d74f4597b8d25a3",
+        "type": "function",
+        "z": "78d13f35e7799e01",
+        "name": "dispatch",
+        "func": "if (context.get('pendingList') == null) { // first invocation\n  msg.TestMode = 'multiple-tests'\n\n  let MsgList = [null], pendingList = []\n  for (let i = 1, l = node.outputCount; i < l; i++) {\n    MsgList.push(null)\n    pendingList.push(i)\n  }\n  context.set('MsgList',MsgList)\n  context.set('pendingList',pendingList)\n}\n\nlet pendingList = context.get('pendingList')\nif (pendingList.length === 0) { // all tests completed\n  context.set('pendingList',null)\n  return [msg]\n} else { // ongoing tests\n  let msg = {} // create new, empty \"msg\" object\n\n  let chosenIndex  = Math.floor(Math.random()*pendingList.length)\n  let chosenOutput = pendingList.splice(chosenIndex,1)[0]\n\n  context.set('pendingList',pendingList)\n\n  let MsgList = context.get('MsgList').slice()\n    MsgList[chosenOutput] = msg\n  return MsgList\n}\n",
+        "outputs": 3,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 160,
+        "wires": [
+            [
+                "c0b928f9b26c4ff6"
+            ],
+            [
+                "1d2ecff8cd7953cf"
+            ],
+            [
+                "1ce1cf886958ad8a"
+            ]
+        ]
+    },
+    {
+        "id": "7982af33033d0378",
+        "type": "link in",
+        "z": "78d13f35e7799e01",
+        "name": "dto. with Components",
+        "links": [
+            "3e4e48c3387e14ea",
+            "55b2f51540ecf622"
+        ],
+        "x": 695,
+        "y": 160,
+        "wires": [
+            [
+                "5d74f4597b8d25a3"
+            ]
+        ]
+    },
+    {
+        "id": "1d2ecff8cd7953cf",
+        "type": "component",
+        "z": "78d13f35e7799e01",
+        "name": "",
+        "targetComponent": {
+            "id": "1016b609118e7555",
+            "name": "#1",
+            "api": []
+        },
+        "paramSources": {},
+        "statuz": "",
+        "statuzType": "str",
+        "outputs": 1,
+        "outLabels": [
+            "default"
+        ],
+        "x": 870,
+        "y": 220,
+        "wires": [
+            [
+                "cf0b3aba8bba4ad7"
+            ]
+        ]
+    },
+    {
+        "id": "1016b609118e7555",
+        "type": "component_in",
+        "z": "78d13f35e7799e01",
+        "name": "#1",
+        "api": [],
+        "x": 730,
+        "y": 440,
+        "wires": [
+            [
+                "8e088af265fca927"
+            ]
+        ]
+    },
+    {
+        "id": "6ecf960107ff376c",
+        "type": "component_in",
+        "z": "78d13f35e7799e01",
+        "name": "#2",
+        "api": [],
+        "x": 730,
+        "y": 600,
+        "wires": [
+            [
+                "984054c96f053ab2"
+            ]
+        ]
+    },
+    {
+        "id": "1ce1cf886958ad8a",
+        "type": "component",
+        "z": "78d13f35e7799e01",
+        "name": "",
+        "targetComponent": {
+            "id": "6ecf960107ff376c",
+            "name": "#2",
+            "api": []
+        },
+        "paramSources": {},
+        "statuz": "",
+        "statuzType": "str",
+        "outputs": 1,
+        "outLabels": [
+            "default"
+        ],
+        "x": 870,
+        "y": 300,
+        "wires": [
+            [
+                "78a151d2bb3ac572"
+            ]
+        ]
+    },
+    {
+        "id": "cf0b3aba8bba4ad7",
+        "type": "function",
+        "z": "78d13f35e7799e01",
+        "name": "report",
+        "func": "if (msg.TestMode === 'show-error') {\n  node.error(context.get('failed-msg') || '(no failure)')\n//return msg // do NOT pass injected message\n} else {\n  if (msg.error == null) {\n    context.set('failed-msg',null)\n    node.status({fill:'green',shape:'dot',text:'ok'})\n  } else {\n    let failedMsg = Object.assign({},RED.util.cloneMessage(msg))\n    context.set('failed-msg',failedMsg)\n    node.status({fill:'red',shape:'dot',text:'failed'})\n    \n    let Totals = flow.get('Totals')\n    flow.set('Totals', typeof Totals === 'number' ? Totals + 1 : 1)\n  }\n  \n  if (msg.TestMode === 'single-test') {\n    return null\n  } else {\n    return msg\n  }\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 220,
+        "wires": [
+            [
+                "3e4e48c3387e14ea"
+            ]
+        ]
+    },
+    {
+        "id": "d94229258b442b88",
+        "type": "inject",
+        "z": "78d13f35e7799e01",
+        "name": " test",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "single-test",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 750,
+        "y": 220,
+        "wires": [
+            [
+                "1d2ecff8cd7953cf"
+            ]
+        ]
+    },
+    {
+        "id": "3c9ce73cf08cca04",
+        "type": "inject",
+        "z": "78d13f35e7799e01",
+        "name": " test",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "single-test",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 750,
+        "y": 300,
+        "wires": [
+            [
+                "1ce1cf886958ad8a"
+            ]
+        ]
+    },
+    {
+        "id": "3e4e48c3387e14ea",
+        "type": "link out",
+        "z": "78d13f35e7799e01",
+        "name": "",
+        "links": [
+            "7982af33033d0378"
+        ],
+        "x": 1215,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "78a151d2bb3ac572",
+        "type": "function",
+        "z": "78d13f35e7799e01",
+        "name": "report",
+        "func": "if (msg.TestMode === 'show-error') {\n  node.error(context.get('failed-msg') || '(no failure)')\n//return msg // do NOT pass injected message\n} else {\n  if (msg.error == null) {\n    context.set('failed-msg',null)\n    node.status({fill:'green',shape:'dot',text:'ok'})\n  } else {\n    let failedMsg = Object.assign({},RED.util.cloneMessage(msg))\n    context.set('failed-msg',failedMsg)\n    node.status({fill:'red',shape:'dot',text:'failed'})\n    \n    let Totals = flow.get('Totals')\n    flow.set('Totals', typeof Totals === 'number' ? Totals + 1 : 1)\n  }\n  \n  if (msg.TestMode === 'single-test') {\n    return null\n  } else {\n    return msg\n  }\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 300,
+        "wires": [
+            [
+                "55b2f51540ecf622"
+            ]
+        ]
+    },
+    {
+        "id": "55b2f51540ecf622",
+        "type": "link out",
+        "z": "78d13f35e7799e01",
+        "name": "",
+        "links": [
+            "7982af33033d0378"
+        ],
+        "x": 1215,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "1a6d63ff1c782dd7",
+        "type": "inject",
+        "z": "78d13f35e7799e01",
+        "name": "show",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "show-error",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 1010,
+        "y": 240,
+        "wires": [
+            [
+                "cf0b3aba8bba4ad7"
+            ]
+        ]
+    },
+    {
+        "id": "c87804d286bdce3f",
+        "type": "inject",
+        "z": "78d13f35e7799e01",
+        "name": "show",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "show-error",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 1010,
+        "y": 320,
+        "wires": [
+            [
+                "78a151d2bb3ac572"
+            ]
+        ]
+    },
+    {
+        "id": "bbf7379401546fc9",
+        "type": "comment",
+        "z": "78d13f35e7799e01",
+        "name": "single-step Test",
+        "info": "",
+        "x": 760,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "c101fe164754e75b",
+        "type": "comment",
+        "z": "78d13f35e7799e01",
+        "name": "multi-step Test",
+        "info": "",
+        "x": 760,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "8e088af265fca927",
+        "type": "function",
+        "z": "78d13f35e7799e01",
+        "name": "test",
+        "func": "node.warn('single-step Test')\n\nif (Math.random() >= 0.5) {\n  throw new Error('Test failed')\n}\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 440,
+        "wires": [
+            [
+                "a730a72f187e4107"
+            ]
+        ]
+    },
+    {
+        "id": "a730a72f187e4107",
+        "type": "component_out",
+        "z": "78d13f35e7799e01",
+        "name": "return",
+        "mode": "default",
+        "component_definitions_are_NOT_allowed_inside_subflows": true,
+        "x": 1010,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "4f588c6ff460b7e0",
+        "type": "catch",
+        "z": "78d13f35e7799e01",
+        "name": "",
+        "scope": [
+            "8e088af265fca927"
+        ],
+        "uncaught": false,
+        "x": 870,
+        "y": 480,
+        "wires": [
+            [
+                "a730a72f187e4107"
+            ]
+        ]
+    },
+    {
+        "id": "984054c96f053ab2",
+        "type": "function",
+        "z": "78d13f35e7799e01",
+        "name": "step #1",
+        "func": "node.warn('multi-step Test')\n\nif (Math.random() >= 0.5) {\n  throw new Error('failure in step #1')\n}\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 880,
+        "y": 600,
+        "wires": [
+            [
+                "8a16a27534fbfbd8"
+            ]
+        ]
+    },
+    {
+        "id": "8a16a27534fbfbd8",
+        "type": "function",
+        "z": "78d13f35e7799e01",
+        "name": "step #2",
+        "func": "if (Math.random() >= 0.5) {\n  throw new Error('failure in step #2')\n}\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1040,
+        "y": 600,
+        "wires": [
+            [
+                "844f2cf6c8e43c7a"
+            ]
+        ]
+    },
+    {
+        "id": "844f2cf6c8e43c7a",
+        "type": "component_out",
+        "z": "78d13f35e7799e01",
+        "name": "return",
+        "mode": "default",
+        "component_definitions_are_NOT_allowed_inside_subflows": true,
+        "x": 1190,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "0abff9b31dd6f608",
+        "type": "catch",
+        "z": "78d13f35e7799e01",
+        "name": "",
+        "scope": [
+            "984054c96f053ab2",
+            "8a16a27534fbfbd8"
+        ],
+        "uncaught": false,
+        "x": 870,
+        "y": 640,
+        "wires": [
+            [
+                "844f2cf6c8e43c7a"
+            ]
+        ]
+    }
+]
