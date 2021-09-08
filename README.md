@@ -6,7 +6,7 @@ Every piece of software should be tested - preferrably automatically. This repos
 
 ## Prerequisites ##
 
-Every example requires the following Node-RED extension
+The example shown in the repository requires the following Node-RED extension
 
 * [node-red-contrib-components](https://github.com/ollixx/node-red-contrib-components)<br>"Components" allow multiply needed flows to be defined once and then invoked from multiple places
 
