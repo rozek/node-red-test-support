@@ -12,7 +12,7 @@ The example shown in the repository requires the following Node-RED extension
 
 ## Automated Tests with Node-RED ##
 
-In a typical "Continuous-Development" setup there are several stages where parts of the developed system (or the system in its entirety) have to pass numerous tests so that the process can continue.
+In a typical "Continuous-Development" setup there are several stages where parts of the created system (or the system in its entirety) have to pass numerous tests so that the development process can continue.
 
 The individual tests should be able to be executed in random order and, thus, be independent of each other. Single failing tests should not affect execution of other tests - in the end, if any test failed, there should be some kind of failure report and, after fixing the underlying problem, a possibility to specifically run the previously failing test only.
 
