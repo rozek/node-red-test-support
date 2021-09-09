@@ -30,6 +30,10 @@ The tests themselves have been implemented as "Components". They may contain of 
 
 Within the test functions it is completely up to the programmer to decide which test framework to use - if any. The only assumption made in this flow is that test failures should throw exceptions.
 
+## Examples ##
+
+Some examples for the approach shown above can be found in the author's [node-red-authorization-examples](https://github.com/rozek/node-red-authorization-examples)
+
 ## License ##
 
 [MIT License](LICENSE.md)
