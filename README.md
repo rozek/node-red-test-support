@@ -14,7 +14,7 @@ The example shown in the repository requires the following Node-RED extension
 
 In a typical "Continuous-Development" setup there are several stages where parts of the created system (or the system in its entirety) have to pass numerous tests so that the development process can continue.
 
-Individual tests should be able to be executed in random order and, thus, run independent of each other (albeit not necessarily simultaneously). Single failing tests should not affect the execution of other tests - in the end, if any test failed, there should be some kind of failure report and, after fixing the underlying problem, a possibility to specifically run the previously failing test only.
+Usual requirements are as follows: individual tests should be able to be executed in random order and, thus, run independent of each other (albeit not necessarily simultaneously). Single failing tests should not affect the execution of other tests - in the end, if any test failed, there should be some kind of failure report and, after fixing the underlying problem, a possibility to specifically run the previously failing test only.
 
 The following flow tries to provide this behaviour: just copy the [included example](test-support.json) into your clipboard and import it into your Node-RED instance.
 
