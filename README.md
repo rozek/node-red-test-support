@@ -10,7 +10,7 @@ Every piece of software should be tested - preferrably automatically. This repos
 
 The example shown in the repository requires the following Node-RED extension
 
-* [node-red-contrib-reusable-flows](https://github.com/ollixx/node-red-contrib-reusable-flows)<br>"Reusable Flows" allow multiply needed flows to be defined once and then invoked from multiple places
+* [node-red-contrib-reusable-flows](https://github.com/rozek/node-red-contrib-reusable-flows)<br>"Reusable Flows" allow multiply needed flows to be defined once and then invoked from multiple places
 
 ## Automated Tests with Node-RED ##
 
