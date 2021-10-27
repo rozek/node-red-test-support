@@ -32,6 +32,12 @@ The tests themselves have been implemented as "Components". They may contain of 
 
 Within the test functions it is completely up to the programmer to decide which test framework to use - if any. The only assumption made in this flow is that test failures should throw exceptions.
 
+## Templates ##
+
+Since setting up test flows is a bit cumbersome, here are a few templates - import the one that suits you most and delete any tests you don't need:
+
+* [template-for-10-tests.json](https://raw.githubusercontent.com/rozek/node-red-test-support/main/template-for-10-tests.json) - a template for up to 10 tests
+
 ## Examples ##
 
 Some examples for the approach shown above can be found in the author's [node-red-authorization-examples](https://github.com/rozek/node-red-authorization-examples)
