@@ -1,0 +1,2348 @@
+[
+    {
+        "id": "2fee872327bc108e",
+        "type": "comment",
+        "z": "c7e82c436b7f4a90",
+        "name": "Test Flow Templates",
+        "info": "",
+        "x": 770,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "3fd0dd7fa6caa3f9",
+        "type": "comment",
+        "z": "c7e82c436b7f4a90",
+        "name": "test #1",
+        "info": "",
+        "x": 1390,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "b69d9413484c7231",
+        "type": "catch",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "scope": [
+            "44e9a9a477317cd3",
+            "228ef9e23b3c1ada",
+            "a7f6a646abc925f6"
+        ],
+        "uncaught": false,
+        "x": 1510,
+        "y": 120,
+        "wires": [
+            [
+                "b3d71d75edfd268f"
+            ]
+        ]
+    },
+    {
+        "id": "44e9a9a477317cd3",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "assert",
+        "func": "let expect = chai.expect\n\n// add your expectations here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1770,
+        "y": 80,
+        "wires": [
+            [
+                "b3d71d75edfd268f"
+            ]
+        ]
+    },
+    {
+        "id": "228ef9e23b3c1ada",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "arrange",
+        "func": "// add your arrangements here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1520,
+        "y": 80,
+        "wires": [
+            [
+                "a7f6a646abc925f6"
+            ]
+        ]
+    },
+    {
+        "id": "b3d71d75edfd268f",
+        "type": "reusable-out",
+        "z": "c7e82c436b7f4a90",
+        "name": "return",
+        "position": 1,
+        "x": 1850,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "5c5d9b23947fd80c",
+        "type": "reusable-in",
+        "z": "c7e82c436b7f4a90",
+        "name": "#1",
+        "info": "describe your reusable flow here",
+        "scope": "local",
+        "x": 1390,
+        "y": 80,
+        "wires": [
+            [
+                "228ef9e23b3c1ada"
+            ]
+        ]
+    },
+    {
+        "id": "a7f6a646abc925f6",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "act",
+        "func": "// add your actions here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1650,
+        "y": 80,
+        "wires": [
+            [
+                "44e9a9a477317cd3"
+            ]
+        ]
+    },
+    {
+        "id": "a2fe0efc39f65329",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": "run Tests",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 760,
+        "y": 100,
+        "wires": [
+            [
+                "625a048b163964f3"
+            ]
+        ]
+    },
+    {
+        "id": "312305740bfdbd84",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "reset totals",
+        "func": "flow.set('Totals',0)\n\nmsg.TestMode = '-'\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1050,
+        "y": 100,
+        "wires": [
+            [
+                "89beb5e49db4e2bc",
+                "46936020916f97eb"
+            ]
+        ]
+    },
+    {
+        "id": "89beb5e49db4e2bc",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "Status",
+        "func": "switch (true) {\n  case (msg.TestMode === '-'):\n    node.status({})\n    break\n  case (flow.get('Totals') === 0):\n    node.status({fill:'green',shape:'dot',text:'ok'})\n    break\n  default:\n    node.status({fill:'red',shape:'dot',text:'failed'})\n}\n",
+        "outputs": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1190,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "46936020916f97eb",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "dispatch",
+        "func": "if (context.get('pendingList') == null) { // first invocation\n  msg.TestMode = 'multiple-tests'\n\n  let MsgList = [null], pendingList = []\n  for (let i = 1, l = node.outputCount; i < l; i++) {\n    MsgList.push(null)\n    pendingList.push(i)\n  }\n  context.set('MsgList',MsgList)\n  context.set('pendingList',pendingList)\n}\n\nlet pendingList = context.get('pendingList')\nif (pendingList.length === 0) { // all tests completed\n  context.set('pendingList',null)\n  return [msg]\n} else { // ongoing tests\n  let msg = {} // create new, empty \"msg\" object\n\n  let chosenIndex  = Math.floor(Math.random()*pendingList.length)\n  let chosenOutput = pendingList.splice(chosenIndex,1)[0]\n\n  context.set('pendingList',pendingList)\n\n  let MsgList = context.get('MsgList').slice()\n    MsgList[chosenOutput] = msg\n  return MsgList\n}\n",
+        "outputs": 11,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 220,
+        "wires": [
+            [
+                "89beb5e49db4e2bc"
+            ],
+            [
+                "8626fcabf71ce32f"
+            ],
+            [
+                "1e3e3dbc1e9afe16"
+            ],
+            [
+                "e6169b871e6d672e"
+            ],
+            [
+                "bce89c9fab85af3a"
+            ],
+            [
+                "afb78ba8690df166"
+            ],
+            [
+                "e98fe04a46a60c96"
+            ],
+            [
+                "ee02192094a8dfc5"
+            ],
+            [
+                "dc41b726d6b90a51"
+            ],
+            [
+                "85f84c6d97bcb43b"
+            ],
+            [
+                "858021eb9a82eea5"
+            ]
+        ]
+    },
+    {
+        "id": "6bc7fd6a5ca0b96d",
+        "type": "link in",
+        "z": "c7e82c436b7f4a90",
+        "name": "basic HTTP authentication",
+        "links": [
+            "7c012d015ee8e20d",
+            "1094870483c10401",
+            "e69ec7b64e4cc71e",
+            "c328cfc4ef5c6020",
+            "afbda0947481ef3c",
+            "7b112a13d8a78999",
+            "57a571204f1c182b",
+            "629d4cd6e57f4258",
+            "fb8fe5e6a26b0c4c",
+            "f621194dedf143f9"
+        ],
+        "x": 695,
+        "y": 220,
+        "wires": [
+            [
+                "46936020916f97eb"
+            ]
+        ]
+    },
+    {
+        "id": "4fe4c4d8bd465ead",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "report",
+        "func": "if (msg.TestMode === 'show-error') {\n  node.error(context.get('failed-msg') || '(no failure)')\n//return msg // do NOT pass injected message\n} else {\n  if (msg.error == null) {\n    context.set('failed-msg',null)\n    node.status({fill:'green',shape:'dot',text:'ok'})\n  } else {\n    let failedMsg = Object.assign({},RED.util.cloneMessage(msg))\n    context.set('failed-msg',failedMsg)\n    node.status({fill:'red',shape:'dot',text:'failed'})\n    \n    let Totals = flow.get('Totals')\n    flow.set('Totals', typeof Totals === 'number' ? Totals + 1 : 1)\n  }\n  \n  if (msg.TestMode === 'single-test') {\n    return null\n  } else {\n    return msg\n  }\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 340,
+        "wires": [
+            [
+                "1094870483c10401"
+            ]
+        ]
+    },
+    {
+        "id": "c2bd8c909f391a74",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": " test",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "single-test",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 750,
+        "y": 340,
+        "wires": [
+            [
+                "8626fcabf71ce32f"
+            ]
+        ]
+    },
+    {
+        "id": "e3929bc8e9dfdc92",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": " test",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "single-test",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 750,
+        "y": 400,
+        "wires": [
+            [
+                "1e3e3dbc1e9afe16"
+            ]
+        ]
+    },
+    {
+        "id": "1094870483c10401",
+        "type": "link out",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "links": [
+            "6bc7fd6a5ca0b96d"
+        ],
+        "x": 1215,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "a24fca8c2f5e8e5f",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "report",
+        "func": "if (msg.TestMode === 'show-error') {\n  node.error(context.get('failed-msg') || '(no failure)')\n//return msg // do NOT pass injected message\n} else {\n  if (msg.error == null) {\n    context.set('failed-msg',null)\n    node.status({fill:'green',shape:'dot',text:'ok'})\n  } else {\n    let failedMsg = Object.assign({},RED.util.cloneMessage(msg))\n    context.set('failed-msg',failedMsg)\n    node.status({fill:'red',shape:'dot',text:'failed'})\n    \n    let Totals = flow.get('Totals')\n    flow.set('Totals', typeof Totals === 'number' ? Totals + 1 : 1)\n  }\n  \n  if (msg.TestMode === 'single-test') {\n    return null\n  } else {\n    return msg\n  }\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 400,
+        "wires": [
+            [
+                "c328cfc4ef5c6020"
+            ]
+        ]
+    },
+    {
+        "id": "c328cfc4ef5c6020",
+        "type": "link out",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "links": [
+            "6bc7fd6a5ca0b96d"
+        ],
+        "x": 1215,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "e49fb9c44244e873",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": "show",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "show-error",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 1010,
+        "y": 360,
+        "wires": [
+            [
+                "4fe4c4d8bd465ead"
+            ]
+        ]
+    },
+    {
+        "id": "c0eca96b7f1412f2",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": "show",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "show-error",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 1010,
+        "y": 420,
+        "wires": [
+            [
+                "a24fca8c2f5e8e5f"
+            ]
+        ]
+    },
+    {
+        "id": "66ebaf75263c2d91",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": " test",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "single-test",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 750,
+        "y": 460,
+        "wires": [
+            [
+                "e6169b871e6d672e"
+            ]
+        ]
+    },
+    {
+        "id": "f105b9b3adf1486f",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "report",
+        "func": "if (msg.TestMode === 'show-error') {\n  node.error(context.get('failed-msg') || '(no failure)')\n//return msg // do NOT pass injected message\n} else {\n  if (msg.error == null) {\n    context.set('failed-msg',null)\n    node.status({fill:'green',shape:'dot',text:'ok'})\n  } else {\n    let failedMsg = Object.assign({},RED.util.cloneMessage(msg))\n    context.set('failed-msg',failedMsg)\n    node.status({fill:'red',shape:'dot',text:'failed'})\n    \n    let Totals = flow.get('Totals')\n    flow.set('Totals', typeof Totals === 'number' ? Totals + 1 : 1)\n  }\n  \n  if (msg.TestMode === 'single-test') {\n    return null\n  } else {\n    return msg\n  }\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 460,
+        "wires": [
+            [
+                "7c012d015ee8e20d"
+            ]
+        ]
+    },
+    {
+        "id": "7c012d015ee8e20d",
+        "type": "link out",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "links": [
+            "6bc7fd6a5ca0b96d"
+        ],
+        "x": 1215,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "a4701dfd58bc4e38",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": "show",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "show-error",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 1010,
+        "y": 480,
+        "wires": [
+            [
+                "f105b9b3adf1486f"
+            ]
+        ]
+    },
+    {
+        "id": "0a7bea59427b00d6",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": " test",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "single-test",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 750,
+        "y": 520,
+        "wires": [
+            [
+                "bce89c9fab85af3a"
+            ]
+        ]
+    },
+    {
+        "id": "d6e9f8acd3108857",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "report",
+        "func": "if (msg.TestMode === 'show-error') {\n  node.error(context.get('failed-msg') || '(no failure)')\n//return msg // do NOT pass injected message\n} else {\n  if (msg.error == null) {\n    context.set('failed-msg',null)\n    node.status({fill:'green',shape:'dot',text:'ok'})\n  } else {\n    let failedMsg = Object.assign({},RED.util.cloneMessage(msg))\n    context.set('failed-msg',failedMsg)\n    node.status({fill:'red',shape:'dot',text:'failed'})\n    \n    let Totals = flow.get('Totals')\n    flow.set('Totals', typeof Totals === 'number' ? Totals + 1 : 1)\n  }\n  \n  if (msg.TestMode === 'single-test') {\n    return null\n  } else {\n    return msg\n  }\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 520,
+        "wires": [
+            [
+                "e69ec7b64e4cc71e"
+            ]
+        ]
+    },
+    {
+        "id": "e69ec7b64e4cc71e",
+        "type": "link out",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "links": [
+            "6bc7fd6a5ca0b96d"
+        ],
+        "x": 1215,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "8e05abc9331b0936",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": "show",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "show-error",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 1010,
+        "y": 540,
+        "wires": [
+            [
+                "d6e9f8acd3108857"
+            ]
+        ]
+    },
+    {
+        "id": "625a048b163964f3",
+        "type": "change",
+        "z": "c7e82c436b7f4a90",
+        "name": "configure",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 900,
+        "y": 100,
+        "wires": [
+            [
+                "312305740bfdbd84"
+            ]
+        ]
+    },
+    {
+        "id": "8626fcabf71ce32f",
+        "type": "reusable",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "target": "#1",
+        "outputs": 1,
+        "x": 890,
+        "y": 340,
+        "wires": [
+            [
+                "4fe4c4d8bd465ead"
+            ]
+        ]
+    },
+    {
+        "id": "1e3e3dbc1e9afe16",
+        "type": "reusable",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "target": "#2",
+        "outputs": 1,
+        "x": 890,
+        "y": 400,
+        "wires": [
+            [
+                "a24fca8c2f5e8e5f"
+            ]
+        ]
+    },
+    {
+        "id": "e6169b871e6d672e",
+        "type": "reusable",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "target": "#3",
+        "outputs": 1,
+        "x": 890,
+        "y": 460,
+        "wires": [
+            [
+                "f105b9b3adf1486f"
+            ]
+        ]
+    },
+    {
+        "id": "bce89c9fab85af3a",
+        "type": "reusable",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "target": "#4",
+        "outputs": 1,
+        "x": 890,
+        "y": 520,
+        "wires": [
+            [
+                "d6e9f8acd3108857"
+            ]
+        ]
+    },
+    {
+        "id": "d4caf6ccd42c3857",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": " test",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "single-test",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 750,
+        "y": 580,
+        "wires": [
+            [
+                "afb78ba8690df166"
+            ]
+        ]
+    },
+    {
+        "id": "bf4759270b0176a8",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "report",
+        "func": "if (msg.TestMode === 'show-error') {\n  node.error(context.get('failed-msg') || '(no failure)')\n//return msg // do NOT pass injected message\n} else {\n  if (msg.error == null) {\n    context.set('failed-msg',null)\n    node.status({fill:'green',shape:'dot',text:'ok'})\n  } else {\n    let failedMsg = Object.assign({},RED.util.cloneMessage(msg))\n    context.set('failed-msg',failedMsg)\n    node.status({fill:'red',shape:'dot',text:'failed'})\n    \n    let Totals = flow.get('Totals')\n    flow.set('Totals', typeof Totals === 'number' ? Totals + 1 : 1)\n  }\n  \n  if (msg.TestMode === 'single-test') {\n    return null\n  } else {\n    return msg\n  }\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 580,
+        "wires": [
+            [
+                "afbda0947481ef3c"
+            ]
+        ]
+    },
+    {
+        "id": "afbda0947481ef3c",
+        "type": "link out",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "links": [
+            "6bc7fd6a5ca0b96d"
+        ],
+        "x": 1215,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "0476770d04053ff0",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": "show",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "show-error",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 1010,
+        "y": 600,
+        "wires": [
+            [
+                "bf4759270b0176a8"
+            ]
+        ]
+    },
+    {
+        "id": "afb78ba8690df166",
+        "type": "reusable",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "target": "#5",
+        "outputs": 1,
+        "x": 890,
+        "y": 580,
+        "wires": [
+            [
+                "bf4759270b0176a8"
+            ]
+        ]
+    },
+    {
+        "id": "49fdca41c90436c1",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": " test",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "single-test",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 750,
+        "y": 640,
+        "wires": [
+            [
+                "e98fe04a46a60c96"
+            ]
+        ]
+    },
+    {
+        "id": "4c50827e371b8538",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "report",
+        "func": "if (msg.TestMode === 'show-error') {\n  node.error(context.get('failed-msg') || '(no failure)')\n//return msg // do NOT pass injected message\n} else {\n  if (msg.error == null) {\n    context.set('failed-msg',null)\n    node.status({fill:'green',shape:'dot',text:'ok'})\n  } else {\n    let failedMsg = Object.assign({},RED.util.cloneMessage(msg))\n    context.set('failed-msg',failedMsg)\n    node.status({fill:'red',shape:'dot',text:'failed'})\n    \n    let Totals = flow.get('Totals')\n    flow.set('Totals', typeof Totals === 'number' ? Totals + 1 : 1)\n  }\n  \n  if (msg.TestMode === 'single-test') {\n    return null\n  } else {\n    return msg\n  }\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 640,
+        "wires": [
+            [
+                "7b112a13d8a78999"
+            ]
+        ]
+    },
+    {
+        "id": "7b112a13d8a78999",
+        "type": "link out",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "links": [
+            "6bc7fd6a5ca0b96d"
+        ],
+        "x": 1215,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "bc3884afacabacb2",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": "show",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "show-error",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 1010,
+        "y": 660,
+        "wires": [
+            [
+                "4c50827e371b8538"
+            ]
+        ]
+    },
+    {
+        "id": "e98fe04a46a60c96",
+        "type": "reusable",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "target": "#6",
+        "outputs": 1,
+        "x": 890,
+        "y": 640,
+        "wires": [
+            [
+                "4c50827e371b8538"
+            ]
+        ]
+    },
+    {
+        "id": "b4987bf877750d6b",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": " test",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "single-test",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 750,
+        "y": 700,
+        "wires": [
+            [
+                "ee02192094a8dfc5"
+            ]
+        ]
+    },
+    {
+        "id": "16c8379fd7c59a1d",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "report",
+        "func": "if (msg.TestMode === 'show-error') {\n  node.error(context.get('failed-msg') || '(no failure)')\n//return msg // do NOT pass injected message\n} else {\n  if (msg.error == null) {\n    context.set('failed-msg',null)\n    node.status({fill:'green',shape:'dot',text:'ok'})\n  } else {\n    let failedMsg = Object.assign({},RED.util.cloneMessage(msg))\n    context.set('failed-msg',failedMsg)\n    node.status({fill:'red',shape:'dot',text:'failed'})\n    \n    let Totals = flow.get('Totals')\n    flow.set('Totals', typeof Totals === 'number' ? Totals + 1 : 1)\n  }\n  \n  if (msg.TestMode === 'single-test') {\n    return null\n  } else {\n    return msg\n  }\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 700,
+        "wires": [
+            [
+                "57a571204f1c182b"
+            ]
+        ]
+    },
+    {
+        "id": "57a571204f1c182b",
+        "type": "link out",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "links": [
+            "6bc7fd6a5ca0b96d"
+        ],
+        "x": 1215,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "720644a39c8b57dc",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": "show",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "show-error",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 1010,
+        "y": 720,
+        "wires": [
+            [
+                "16c8379fd7c59a1d"
+            ]
+        ]
+    },
+    {
+        "id": "ee02192094a8dfc5",
+        "type": "reusable",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "target": "#7",
+        "outputs": 1,
+        "x": 890,
+        "y": 700,
+        "wires": [
+            [
+                "16c8379fd7c59a1d"
+            ]
+        ]
+    },
+    {
+        "id": "f5b4fa6f1e465430",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": " test",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "single-test",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 750,
+        "y": 760,
+        "wires": [
+            [
+                "dc41b726d6b90a51"
+            ]
+        ]
+    },
+    {
+        "id": "bbaf6df425b35468",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "report",
+        "func": "if (msg.TestMode === 'show-error') {\n  node.error(context.get('failed-msg') || '(no failure)')\n//return msg // do NOT pass injected message\n} else {\n  if (msg.error == null) {\n    context.set('failed-msg',null)\n    node.status({fill:'green',shape:'dot',text:'ok'})\n  } else {\n    let failedMsg = Object.assign({},RED.util.cloneMessage(msg))\n    context.set('failed-msg',failedMsg)\n    node.status({fill:'red',shape:'dot',text:'failed'})\n    \n    let Totals = flow.get('Totals')\n    flow.set('Totals', typeof Totals === 'number' ? Totals + 1 : 1)\n  }\n  \n  if (msg.TestMode === 'single-test') {\n    return null\n  } else {\n    return msg\n  }\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 760,
+        "wires": [
+            [
+                "629d4cd6e57f4258"
+            ]
+        ]
+    },
+    {
+        "id": "629d4cd6e57f4258",
+        "type": "link out",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "links": [
+            "6bc7fd6a5ca0b96d"
+        ],
+        "x": 1215,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "24916f502f08e323",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": "show",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "show-error",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 1010,
+        "y": 780,
+        "wires": [
+            [
+                "bbaf6df425b35468"
+            ]
+        ]
+    },
+    {
+        "id": "dc41b726d6b90a51",
+        "type": "reusable",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "target": "#8",
+        "outputs": 1,
+        "x": 890,
+        "y": 760,
+        "wires": [
+            [
+                "bbaf6df425b35468"
+            ]
+        ]
+    },
+    {
+        "id": "f83db954ddfd677b",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": " test",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "single-test",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 750,
+        "y": 820,
+        "wires": [
+            [
+                "85f84c6d97bcb43b"
+            ]
+        ]
+    },
+    {
+        "id": "06f931fda1451e58",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "report",
+        "func": "if (msg.TestMode === 'show-error') {\n  node.error(context.get('failed-msg') || '(no failure)')\n//return msg // do NOT pass injected message\n} else {\n  if (msg.error == null) {\n    context.set('failed-msg',null)\n    node.status({fill:'green',shape:'dot',text:'ok'})\n  } else {\n    let failedMsg = Object.assign({},RED.util.cloneMessage(msg))\n    context.set('failed-msg',failedMsg)\n    node.status({fill:'red',shape:'dot',text:'failed'})\n    \n    let Totals = flow.get('Totals')\n    flow.set('Totals', typeof Totals === 'number' ? Totals + 1 : 1)\n  }\n  \n  if (msg.TestMode === 'single-test') {\n    return null\n  } else {\n    return msg\n  }\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 820,
+        "wires": [
+            [
+                "fb8fe5e6a26b0c4c"
+            ]
+        ]
+    },
+    {
+        "id": "fb8fe5e6a26b0c4c",
+        "type": "link out",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "links": [
+            "6bc7fd6a5ca0b96d"
+        ],
+        "x": 1215,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "1ea7744b3642e6b1",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": "show",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "show-error",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 1010,
+        "y": 840,
+        "wires": [
+            [
+                "06f931fda1451e58"
+            ]
+        ]
+    },
+    {
+        "id": "85f84c6d97bcb43b",
+        "type": "reusable",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "target": "#9",
+        "outputs": 1,
+        "x": 890,
+        "y": 820,
+        "wires": [
+            [
+                "06f931fda1451e58"
+            ]
+        ]
+    },
+    {
+        "id": "927020707cb67178",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": " test",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "single-test",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 750,
+        "y": 880,
+        "wires": [
+            [
+                "858021eb9a82eea5"
+            ]
+        ]
+    },
+    {
+        "id": "46f5d6c4704959d8",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "report",
+        "func": "if (msg.TestMode === 'show-error') {\n  node.error(context.get('failed-msg') || '(no failure)')\n//return msg // do NOT pass injected message\n} else {\n  if (msg.error == null) {\n    context.set('failed-msg',null)\n    node.status({fill:'green',shape:'dot',text:'ok'})\n  } else {\n    let failedMsg = Object.assign({},RED.util.cloneMessage(msg))\n    context.set('failed-msg',failedMsg)\n    node.status({fill:'red',shape:'dot',text:'failed'})\n    \n    let Totals = flow.get('Totals')\n    flow.set('Totals', typeof Totals === 'number' ? Totals + 1 : 1)\n  }\n  \n  if (msg.TestMode === 'single-test') {\n    return null\n  } else {\n    return msg\n  }\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 880,
+        "wires": [
+            [
+                "f621194dedf143f9"
+            ]
+        ]
+    },
+    {
+        "id": "f621194dedf143f9",
+        "type": "link out",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "links": [
+            "6bc7fd6a5ca0b96d"
+        ],
+        "x": 1215,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "ed572185776ca34d",
+        "type": "inject",
+        "z": "c7e82c436b7f4a90",
+        "name": "show",
+        "props": [
+            {
+                "p": "TestMode",
+                "v": "show-error",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 1010,
+        "y": 900,
+        "wires": [
+            [
+                "46f5d6c4704959d8"
+            ]
+        ]
+    },
+    {
+        "id": "858021eb9a82eea5",
+        "type": "reusable",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "target": "#10",
+        "outputs": 1,
+        "x": 890,
+        "y": 880,
+        "wires": [
+            [
+                "46f5d6c4704959d8"
+            ]
+        ]
+    },
+    {
+        "id": "edab3023cb6c50ed",
+        "type": "comment",
+        "z": "c7e82c436b7f4a90",
+        "name": "test #2",
+        "info": "",
+        "x": 1390,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "a41bbf5711524fd7",
+        "type": "catch",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "scope": [
+            "a0a2f33140e50bfe",
+            "6b662dd5bede4ab8",
+            "9115d1f14a0ad6af"
+        ],
+        "uncaught": false,
+        "x": 1510,
+        "y": 240,
+        "wires": [
+            [
+                "59add8c9b74c2afd"
+            ]
+        ]
+    },
+    {
+        "id": "a0a2f33140e50bfe",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "assert",
+        "func": "let expect = chai.expect\n\n// add your expectations here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1770,
+        "y": 200,
+        "wires": [
+            [
+                "59add8c9b74c2afd"
+            ]
+        ]
+    },
+    {
+        "id": "6b662dd5bede4ab8",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "arrange",
+        "func": "// add your arrangements here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1520,
+        "y": 200,
+        "wires": [
+            [
+                "9115d1f14a0ad6af"
+            ]
+        ]
+    },
+    {
+        "id": "59add8c9b74c2afd",
+        "type": "reusable-out",
+        "z": "c7e82c436b7f4a90",
+        "name": "return",
+        "position": 1,
+        "x": 1850,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "3ba033350ed4729c",
+        "type": "reusable-in",
+        "z": "c7e82c436b7f4a90",
+        "name": "#2",
+        "info": "describe your reusable flow here",
+        "scope": "local",
+        "x": 1390,
+        "y": 200,
+        "wires": [
+            [
+                "6b662dd5bede4ab8"
+            ]
+        ]
+    },
+    {
+        "id": "9115d1f14a0ad6af",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "act",
+        "func": "// add your actions here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1650,
+        "y": 200,
+        "wires": [
+            [
+                "a0a2f33140e50bfe"
+            ]
+        ]
+    },
+    {
+        "id": "37669f54a80f3bd4",
+        "type": "comment",
+        "z": "c7e82c436b7f4a90",
+        "name": "test #3",
+        "info": "",
+        "x": 1390,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "d710d163a260b394",
+        "type": "catch",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "scope": [
+            "57f7f8015f2be268",
+            "1babf23345ec8318",
+            "542cb5bc8f84a423"
+        ],
+        "uncaught": false,
+        "x": 1510,
+        "y": 360,
+        "wires": [
+            [
+                "1062da749246157e"
+            ]
+        ]
+    },
+    {
+        "id": "57f7f8015f2be268",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "assert",
+        "func": "let expect = chai.expect\n\n// add your expectations here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1770,
+        "y": 320,
+        "wires": [
+            [
+                "1062da749246157e"
+            ]
+        ]
+    },
+    {
+        "id": "1babf23345ec8318",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "arrange",
+        "func": "// add your arrangements here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1520,
+        "y": 320,
+        "wires": [
+            [
+                "542cb5bc8f84a423"
+            ]
+        ]
+    },
+    {
+        "id": "1062da749246157e",
+        "type": "reusable-out",
+        "z": "c7e82c436b7f4a90",
+        "name": "return",
+        "position": 1,
+        "x": 1850,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "3ea28d66ee995adf",
+        "type": "reusable-in",
+        "z": "c7e82c436b7f4a90",
+        "name": "#3",
+        "info": "describe your reusable flow here",
+        "scope": "local",
+        "x": 1390,
+        "y": 320,
+        "wires": [
+            [
+                "1babf23345ec8318"
+            ]
+        ]
+    },
+    {
+        "id": "542cb5bc8f84a423",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "act",
+        "func": "// add your actions here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1650,
+        "y": 320,
+        "wires": [
+            [
+                "57f7f8015f2be268"
+            ]
+        ]
+    },
+    {
+        "id": "79cba33d473c842b",
+        "type": "comment",
+        "z": "c7e82c436b7f4a90",
+        "name": "test #4",
+        "info": "",
+        "x": 1390,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "10964da8dcdcd9e4",
+        "type": "catch",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "scope": [
+            "7459241b402058b6",
+            "2d15b84b3c27db75",
+            "85e10a0d71a0d6a5"
+        ],
+        "uncaught": false,
+        "x": 1510,
+        "y": 480,
+        "wires": [
+            [
+                "27b8d97d725c286f"
+            ]
+        ]
+    },
+    {
+        "id": "7459241b402058b6",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "assert",
+        "func": "let expect = chai.expect\n\n// add your expectations here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1770,
+        "y": 440,
+        "wires": [
+            [
+                "27b8d97d725c286f"
+            ]
+        ]
+    },
+    {
+        "id": "2d15b84b3c27db75",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "arrange",
+        "func": "// add your arrangements here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1520,
+        "y": 440,
+        "wires": [
+            [
+                "85e10a0d71a0d6a5"
+            ]
+        ]
+    },
+    {
+        "id": "27b8d97d725c286f",
+        "type": "reusable-out",
+        "z": "c7e82c436b7f4a90",
+        "name": "return",
+        "position": 1,
+        "x": 1850,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "c9022ee71c058876",
+        "type": "reusable-in",
+        "z": "c7e82c436b7f4a90",
+        "name": "#4",
+        "info": "describe your reusable flow here",
+        "scope": "local",
+        "x": 1390,
+        "y": 440,
+        "wires": [
+            [
+                "2d15b84b3c27db75"
+            ]
+        ]
+    },
+    {
+        "id": "85e10a0d71a0d6a5",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "act",
+        "func": "// add your actions here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1650,
+        "y": 440,
+        "wires": [
+            [
+                "7459241b402058b6"
+            ]
+        ]
+    },
+    {
+        "id": "f9774e1e95fbb978",
+        "type": "comment",
+        "z": "c7e82c436b7f4a90",
+        "name": "test #5",
+        "info": "",
+        "x": 1390,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "de3e1b08166fced3",
+        "type": "catch",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "scope": [
+            "bc60f2aa51f442f4",
+            "6e03ae8cefe5ed4b",
+            "20d2d948c79634f7"
+        ],
+        "uncaught": false,
+        "x": 1510,
+        "y": 600,
+        "wires": [
+            [
+                "6519757e5f6c09c2"
+            ]
+        ]
+    },
+    {
+        "id": "bc60f2aa51f442f4",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "assert",
+        "func": "let expect = chai.expect\n\n// add your expectations here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1770,
+        "y": 560,
+        "wires": [
+            [
+                "6519757e5f6c09c2"
+            ]
+        ]
+    },
+    {
+        "id": "6e03ae8cefe5ed4b",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "arrange",
+        "func": "// add your arrangements here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1520,
+        "y": 560,
+        "wires": [
+            [
+                "20d2d948c79634f7"
+            ]
+        ]
+    },
+    {
+        "id": "6519757e5f6c09c2",
+        "type": "reusable-out",
+        "z": "c7e82c436b7f4a90",
+        "name": "return",
+        "position": 1,
+        "x": 1850,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "07c20b8d688e248e",
+        "type": "reusable-in",
+        "z": "c7e82c436b7f4a90",
+        "name": "#5",
+        "info": "describe your reusable flow here",
+        "scope": "local",
+        "x": 1390,
+        "y": 560,
+        "wires": [
+            [
+                "6e03ae8cefe5ed4b"
+            ]
+        ]
+    },
+    {
+        "id": "20d2d948c79634f7",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "act",
+        "func": "// add your actions here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1650,
+        "y": 560,
+        "wires": [
+            [
+                "bc60f2aa51f442f4"
+            ]
+        ]
+    },
+    {
+        "id": "65685ad288aa3c54",
+        "type": "comment",
+        "z": "c7e82c436b7f4a90",
+        "name": "test #6",
+        "info": "",
+        "x": 1390,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "7232a6acb6c3ca8c",
+        "type": "catch",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "scope": [
+            "0c47c78b738e88cc",
+            "821b98a180b340b7",
+            "8a8e8d60532ad4be"
+        ],
+        "uncaught": false,
+        "x": 1510,
+        "y": 720,
+        "wires": [
+            [
+                "a16753558ee6f3c3"
+            ]
+        ]
+    },
+    {
+        "id": "0c47c78b738e88cc",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "assert",
+        "func": "let expect = chai.expect\n\n// add your expectations here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1770,
+        "y": 680,
+        "wires": [
+            [
+                "a16753558ee6f3c3"
+            ]
+        ]
+    },
+    {
+        "id": "821b98a180b340b7",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "arrange",
+        "func": "// add your arrangements here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1520,
+        "y": 680,
+        "wires": [
+            [
+                "8a8e8d60532ad4be"
+            ]
+        ]
+    },
+    {
+        "id": "a16753558ee6f3c3",
+        "type": "reusable-out",
+        "z": "c7e82c436b7f4a90",
+        "name": "return",
+        "position": 1,
+        "x": 1850,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "1b5bd7e1b6a287bc",
+        "type": "reusable-in",
+        "z": "c7e82c436b7f4a90",
+        "name": "#6",
+        "info": "describe your reusable flow here",
+        "scope": "local",
+        "x": 1390,
+        "y": 680,
+        "wires": [
+            [
+                "821b98a180b340b7"
+            ]
+        ]
+    },
+    {
+        "id": "8a8e8d60532ad4be",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "act",
+        "func": "// add your actions here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1650,
+        "y": 680,
+        "wires": [
+            [
+                "0c47c78b738e88cc"
+            ]
+        ]
+    },
+    {
+        "id": "17b89206348667e7",
+        "type": "comment",
+        "z": "c7e82c436b7f4a90",
+        "name": "test #7",
+        "info": "",
+        "x": 1390,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "9a8f5bdfcb82b074",
+        "type": "catch",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "scope": [
+            "64783af29b0bbc85",
+            "4538bc320c9b0d4a",
+            "604dfb613ecf1f0e"
+        ],
+        "uncaught": false,
+        "x": 1510,
+        "y": 840,
+        "wires": [
+            [
+                "459017e8bb924bf3"
+            ]
+        ]
+    },
+    {
+        "id": "64783af29b0bbc85",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "assert",
+        "func": "let expect = chai.expect\n\n// add your expectations here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1770,
+        "y": 800,
+        "wires": [
+            [
+                "459017e8bb924bf3"
+            ]
+        ]
+    },
+    {
+        "id": "4538bc320c9b0d4a",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "arrange",
+        "func": "// add your arrangements here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1520,
+        "y": 800,
+        "wires": [
+            [
+                "604dfb613ecf1f0e"
+            ]
+        ]
+    },
+    {
+        "id": "459017e8bb924bf3",
+        "type": "reusable-out",
+        "z": "c7e82c436b7f4a90",
+        "name": "return",
+        "position": 1,
+        "x": 1850,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "0a5d84f1caa75a9f",
+        "type": "reusable-in",
+        "z": "c7e82c436b7f4a90",
+        "name": "#7",
+        "info": "describe your reusable flow here",
+        "scope": "local",
+        "x": 1390,
+        "y": 800,
+        "wires": [
+            [
+                "4538bc320c9b0d4a"
+            ]
+        ]
+    },
+    {
+        "id": "604dfb613ecf1f0e",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "act",
+        "func": "// add your actions here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1650,
+        "y": 800,
+        "wires": [
+            [
+                "64783af29b0bbc85"
+            ]
+        ]
+    },
+    {
+        "id": "23126333bcae7be2",
+        "type": "comment",
+        "z": "c7e82c436b7f4a90",
+        "name": "test #8",
+        "info": "",
+        "x": 1390,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "11cb43297617cbb7",
+        "type": "catch",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "scope": [
+            "3c76926bc92dcf53",
+            "b2392520849c0649",
+            "8aeb0fe78fd19766"
+        ],
+        "uncaught": false,
+        "x": 1510,
+        "y": 960,
+        "wires": [
+            [
+                "6c97ec15518f98ea"
+            ]
+        ]
+    },
+    {
+        "id": "3c76926bc92dcf53",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "assert",
+        "func": "let expect = chai.expect\n\n// add your expectations here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1770,
+        "y": 920,
+        "wires": [
+            [
+                "6c97ec15518f98ea"
+            ]
+        ]
+    },
+    {
+        "id": "b2392520849c0649",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "arrange",
+        "func": "// add your arrangements here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1520,
+        "y": 920,
+        "wires": [
+            [
+                "8aeb0fe78fd19766"
+            ]
+        ]
+    },
+    {
+        "id": "6c97ec15518f98ea",
+        "type": "reusable-out",
+        "z": "c7e82c436b7f4a90",
+        "name": "return",
+        "position": 1,
+        "x": 1850,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "1a03d11847af4e89",
+        "type": "reusable-in",
+        "z": "c7e82c436b7f4a90",
+        "name": "#8",
+        "info": "describe your reusable flow here",
+        "scope": "local",
+        "x": 1390,
+        "y": 920,
+        "wires": [
+            [
+                "b2392520849c0649"
+            ]
+        ]
+    },
+    {
+        "id": "8aeb0fe78fd19766",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "act",
+        "func": "// add your actions here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1650,
+        "y": 920,
+        "wires": [
+            [
+                "3c76926bc92dcf53"
+            ]
+        ]
+    },
+    {
+        "id": "35170dde52f9fbee",
+        "type": "comment",
+        "z": "c7e82c436b7f4a90",
+        "name": "test #9",
+        "info": "",
+        "x": 1390,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "846374de5537737d",
+        "type": "catch",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "scope": [
+            "d0d6e1702375822a",
+            "e4eed24f9dbcf67d",
+            "57c985dbd281b981"
+        ],
+        "uncaught": false,
+        "x": 1510,
+        "y": 1080,
+        "wires": [
+            [
+                "cedd4afe97628f6b"
+            ]
+        ]
+    },
+    {
+        "id": "d0d6e1702375822a",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "assert",
+        "func": "let expect = chai.expect\n\n// add your expectations here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1770,
+        "y": 1040,
+        "wires": [
+            [
+                "cedd4afe97628f6b"
+            ]
+        ]
+    },
+    {
+        "id": "e4eed24f9dbcf67d",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "arrange",
+        "func": "// add your arrangements here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1520,
+        "y": 1040,
+        "wires": [
+            [
+                "57c985dbd281b981"
+            ]
+        ]
+    },
+    {
+        "id": "cedd4afe97628f6b",
+        "type": "reusable-out",
+        "z": "c7e82c436b7f4a90",
+        "name": "return",
+        "position": 1,
+        "x": 1850,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "14f9d33662a9e8f0",
+        "type": "reusable-in",
+        "z": "c7e82c436b7f4a90",
+        "name": "#9",
+        "info": "describe your reusable flow here",
+        "scope": "local",
+        "x": 1390,
+        "y": 1040,
+        "wires": [
+            [
+                "e4eed24f9dbcf67d"
+            ]
+        ]
+    },
+    {
+        "id": "57c985dbd281b981",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "act",
+        "func": "// add your actions here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1650,
+        "y": 1040,
+        "wires": [
+            [
+                "d0d6e1702375822a"
+            ]
+        ]
+    },
+    {
+        "id": "378f0a6fd4e16e29",
+        "type": "comment",
+        "z": "c7e82c436b7f4a90",
+        "name": "test #10",
+        "info": "",
+        "x": 1400,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "3e77626a3130b6ce",
+        "type": "catch",
+        "z": "c7e82c436b7f4a90",
+        "name": "",
+        "scope": [
+            "d8fb02ed6cdd2dc3",
+            "a94d0badca0b3453",
+            "b7b5068eb369cdcf"
+        ],
+        "uncaught": false,
+        "x": 1510,
+        "y": 1200,
+        "wires": [
+            [
+                "bd5e01ae1dea743c"
+            ]
+        ]
+    },
+    {
+        "id": "d8fb02ed6cdd2dc3",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "assert",
+        "func": "let expect = chai.expect\n\n// add your expectations here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1770,
+        "y": 1160,
+        "wires": [
+            [
+                "bd5e01ae1dea743c"
+            ]
+        ]
+    },
+    {
+        "id": "a94d0badca0b3453",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "arrange",
+        "func": "// add your arrangements here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1520,
+        "y": 1160,
+        "wires": [
+            [
+                "b7b5068eb369cdcf"
+            ]
+        ]
+    },
+    {
+        "id": "bd5e01ae1dea743c",
+        "type": "reusable-out",
+        "z": "c7e82c436b7f4a90",
+        "name": "return",
+        "position": 1,
+        "x": 1850,
+        "y": 1200,
+        "wires": []
+    },
+    {
+        "id": "2e0a73844db9e4f4",
+        "type": "reusable-in",
+        "z": "c7e82c436b7f4a90",
+        "name": "#10",
+        "info": "describe your reusable flow here",
+        "scope": "local",
+        "x": 1390,
+        "y": 1160,
+        "wires": [
+            [
+                "a94d0badca0b3453"
+            ]
+        ]
+    },
+    {
+        "id": "b7b5068eb369cdcf",
+        "type": "function",
+        "z": "c7e82c436b7f4a90",
+        "name": "act",
+        "func": "// add your actions here\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "chai",
+                "module": "chai"
+            }
+        ],
+        "x": 1650,
+        "y": 1160,
+        "wires": [
+            [
+                "d8fb02ed6cdd2dc3"
+            ]
+        ]
+    }
+]
